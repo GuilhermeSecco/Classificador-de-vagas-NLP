@@ -1,7 +1,7 @@
 import json
 import time
 
-def carregar_cookies(driver, caminho="config/cookies.json"):
+def carregar_cookies(driver, caminho="src/scraping/scraping_utils/cookies.json"):
     driver.get("https://www.linkedin.com")
     time.sleep(2)
     with open(caminho, "r") as json_file:

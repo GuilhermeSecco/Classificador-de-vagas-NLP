@@ -1,54 +1,49 @@
-import random
-import time
-from selenium import By
-from bs4 import BeautifulSoup as soup
+from src.scraping.scraping_utils.scrolling import scroll_automatico
+from src.scraping.scraping_utils.extract_post_data import *
+from src.scraping.scraping_utils.text_cleaning import *
 
-def obter_altura_atual(driver):
-    altura_atual = driver.execute_script("return document.body.scrollHeight")
-    return altura_atual
+def coletar_posts_driver(driver, max_posts=100):
+    posts_extraidos = []
+    tentativas_sem_novos_posts = 0
 
-def valor_scroll_aleatorio(min = 600, max = 800):
-    return random.randint(min, max)
+    while len(posts_extraidos) < max_posts and tentativas_sem_novos_posts < 5:
+        scroll_automatico(driver)
+        posts_selenium = coletar_posts_da_pagina(driver)
 
-def pausa_aleatoria(min = 0.3, max = 3):
-    return random.uniform(min, max)
+        novos_posts = 0
 
-def chance_realizar_mini_scroll():
-    probabilidade = 7
-    valor = random.randrange(100)
-    if probabilidade > valor:
-        return True
-    else:
-        return False
+        for post in posts_selenium:
+            if len(posts_extraidos) >= max_posts:
+                break
 
-def mini_scroll_para_cima(driver):
-    valor = random.randint(100, 200)
-    driver.execute_script("window.scrollBy(0, arguments[0]);", -valor)
+            html = extrair_html_do_post(post)
+            soup = transformar_em_soup(html)
+            autor = extrair_autor_post(soup)
+            texto = extrair_texto_post(soup)
+            texto = normalizar_unicode(texto)
+            texto, hashtags = separar_texto_hashtags(texto)
+            data = extrair_data_post(soup)
+            link = gerar_link_do_post(post)
+            senioridade = extrair_senioridade(texto)
+            localizacao = extrair_localizacao(texto)
+            if texto and autor:
+                post_data = {
+                    "autor": autor,
+                    "texto": texto,
+                    "data": data,
+                    "link": link,
+                    "hashtags": hashtags,
+                    "senioridade": senioridade,
+                    "localizacao": localizacao
+                }
 
-def simular_scroll_humano(driver):
-    valor = valor_scroll_aleatorio()
-    driver.execute_script("window.scrollBy(0, arguments[0]);", valor)
-    time.sleep(pausa_aleatoria())
-    if chance_realizar_mini_scroll():
-        mini_scroll_para_cima(driver)
-        time.sleep(pausa_aleatoria())
+                if post_data not in posts_extraidos:
+                    posts_extraidos.append(post_data)
+                    novos_posts += 1
 
-def scroll_automatico(driver):
-    limite_ciclo = 50
-    ciclo = 0
-    while ciclo < limite_ciclo:
-        altura_inicial = obter_altura_atual(driver)
-        simular_scroll_humano(driver)
-        altura_nova = obter_altura_atual(driver)
-        if altura_nova == altura_inicial:
-            break
-        ciclo += 1
+        if novos_posts == 0:
+            tentativas_sem_novos_posts += 1
+        else:
+            tentativas_sem_novos_posts = 0
 
-def coletar_posts_da_pagina(driver):
-    return driver.find_elements(By.CSS_SELECTOR, "div[data-urn]")
-
-def extrair_html_do_post(post):
-    return post.get_attribute("outerHTML")
-
-def transformar_em_soup(html):
-    return soup(html, "html.parser")
+    return posts_extraidos

@@ -6,3 +6,4 @@ data/raw/
 .idea/
 .env
 .config/
+src/scraping/scraping_utils/cookies.json

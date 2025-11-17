@@ -1,5 +1,6 @@
+from selenium import webdriver
+
 def iniciar_navegador():
-    from selenium import webdriver
 
     driver = webdriver.Chrome()
 
