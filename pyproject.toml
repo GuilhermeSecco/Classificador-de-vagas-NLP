@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.14.2",
+    "git-filter-repo>=2.47.0",
     "pandas>=2.3.3",
     "scikit-learn>=1.7.2",
     "selenium>=4.38.0",
