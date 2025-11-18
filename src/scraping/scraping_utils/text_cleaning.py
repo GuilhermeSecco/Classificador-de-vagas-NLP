@@ -28,16 +28,40 @@ def separar_texto_hashtags(texto):
 
 def extrair_senioridade(texto):
     texto = texto.lower()
-    if "estágio" in texto or "estagiário" in texto or "intern" in texto or "estagio" in texto or "estagiario" in texto:
-        return "estagio"
-    if "júnior" in texto or "junior" in texto or "jr" in texto:
-        return "junior"
-    if "pleno" in texto or "mid" in texto:
-        return "pleno"
-    if "sênior" in texto or "senior" in texto or "sr" in texto:
-        return "senior"
-    if "lead" in texto or "tech lead" in texto or "coordenador" in texto:
-        return "lead"
+
+    padroes = {
+        "multi": [
+            r"\bvagas\b", r"\boportunidades\b"
+        ],
+        "estagio": [
+            r"\best[áa]gio\b", r"\bestagi[áa]rio\b", r"\bintern\b", r"\binternship\b", r"\bestagi[áa]ria\b"
+        ],
+        "junior": [
+            r"\bj[uú]nior\b", r"\bjunior\b", r"\bjr\b", r"\bjuninho\b", r"\bjuniores\b",
+        ],
+        "pleno": [
+            r"\bpleno\b", r"\bmid\b", r"\bmid-level\b", r"\bmid level\b"
+        ],
+        "senior": [
+            r"\bs[êe]nior\b", r"\bsenior\b", r"\bsr\b"
+        ],
+        "especialista": [
+            r"\bespecialista\b", r"\bstaff\b", r"\bexpert\b", r"\specialist\b"
+        ],
+        "lead": [
+            r"\blead\b", r"\btech lead\b", r"\bprincipal\b", r"\bcoordenador\b", r"\bhead\b", r"\blíder\b"
+        ],
+        "multi": [
+            r"junior.*pleno", r"pleno.*senior", r"junior.*senior",
+            r"jr.*sr", r"junior e pleno", r"pleno e senior", r"jr e sr"
+        ],
+    }
+
+    for nivel, regex_list in padroes.items():
+        for regex in regex_list:
+            if re.search(regex, texto):
+                return nivel
+
     return "não identificado"
 
 def extrair_localizacao(texto):

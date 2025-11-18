@@ -2,7 +2,7 @@ from src.scraping.scraping_utils.scrolling import scroll_automatico
 from src.scraping.scraping_utils.extract_post_data import *
 from src.scraping.scraping_utils.text_cleaning import *
 
-def coletar_posts_driver(driver, max_posts=100):
+def coletar_posts_driver(driver, max_posts=300):
     posts_extraidos = []
     tentativas_sem_novos_posts = 0
 

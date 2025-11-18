@@ -14,7 +14,7 @@ if __name__ == "__main__":
     carregar_cookies(driver)
 
     #Buscando as vagas (Texto = Pesquisa, o período pode receber os valores: day = dia, week = semana, month = mês)
-    url = filtrar_busca("Vaga Python", periodo="week")
+    url = filtrar_busca("Vaga Analista de dados Junior", periodo="month")
     driver.get(url)
     time.sleep(4)
 
