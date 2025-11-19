@@ -5,11 +5,13 @@ from sentence_transformers import SentenceTransformer
 
 def predict(df, modelo):
     df = df.reset_index(drop=True)
+    autor = prepare_text_column(df, col="autor")
     texts = prepare_text_column(df, col="texto")
     hashtags = prepare_text_column(df, col="hashtags")
+    emb_autor = embed_text(autor, modelo_embeddings)
     emb_text = embed_text(texts, modelo_embeddings)
     emb_hash = embed_text(hashtags, modelo_embeddings)
-    X = combine_embeddings(emb_text, emb_hash)
+    X = combine_embeddings(emb_autor, emb_text, emb_hash)
     return modelo.predict(X)
 
 df = pd.read_csv("data/raw/posts_linkedin.csv")
