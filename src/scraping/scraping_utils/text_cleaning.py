@@ -119,7 +119,6 @@ def converter_data(data_str, data_base=None):
         return provavel_data.strftime("%d/%m/%Y")
 
     # ---- Meses ----
-    # Usamos 30 dias como aproximação
     if "m" in s:
         n = int(re.findall(r"\d+", s)[0])
         provavel_data = data_base - timedelta(days=30 * n)
