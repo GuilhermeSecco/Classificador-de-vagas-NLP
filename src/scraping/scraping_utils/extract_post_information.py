@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup as soup
-from src.scraping.scraping_utils.text_cleaning import limpar_repeticao, limpar_data
+from src.scraping.scraping_utils.text_cleaning import limpar_repeticao, limpar_data, converter_data
 
 def coletar_posts_da_pagina(driver):
     return driver.find_elements(By.CSS_SELECTOR, "div[data-urn]")
@@ -34,7 +34,10 @@ def extrair_data_post(soup):
         data_span = bloco.find("span")
         if data_span:
             texto = data_span.get_text(strip=True)
-            return limpar_data(texto)
+            texto = limpar_data(texto)
+            data_abs = converter_data(texto)
+            if data_abs:
+                return data_abs.strftime("%Y-%m-%d")
 
 def extrair_link_post(soup):
     # Procurar links prováveis a partir de padrões do LinkedIn

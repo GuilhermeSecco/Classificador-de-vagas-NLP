@@ -73,3 +73,65 @@ def extrair_localizacao(texto):
         if cidade in texto:
             return cidade
     return "não identificado"
+
+def converter_data(data_str, data_base=None):
+    """
+    Converte datas relativas do LinkedIn para datas absolutas.
+    data_str: string como '1 sem', '3 meses', 'há 4 dias', '25 min'
+    data_base: data de coleta (datetime). Se None, usa agora.
+    """
+    #Import das bibliotecas
+    import re
+    from datetime import datetime, timedelta
+
+    #Carregando a hora atual
+    if data_base is None:
+        data_base = datetime.now()
+
+    s = data_str.lower().strip()
+
+    # ---- Agora ----
+    if "agora" in s:
+        return data_base
+
+    # ---- Minutos ----
+    if "min" in s:
+        n = int(re.findall(r"\d+", s)[0])
+        provavel_data = data_base - timedelta(minutes=n)
+        return provavel_data.strftime("%d/%m/%Y")
+
+    # ---- Horas ----
+    if "h" in s:
+        n = int(re.findall(r"\d+", s)[0])
+        provavel_data = data_base - timedelta(hours=n)
+        return provavel_data.strftime("%d/%m/%Y")
+
+    # ---- Dias ----
+    if "d" in s:
+        n = int(re.findall(r"\d+", s)[0])
+        provavel_data = data_base - timedelta(days=n)
+        return provavel_data.strftime("%d/%m/%Y")
+
+    # ---- Semanas ----
+    if "sem" in s:
+        n = int(re.findall(r"\d+", s)[0])
+        provavel_data = data_base - timedelta(weeks=n)
+        return provavel_data.strftime("%d/%m/%Y")
+
+    # ---- Meses ----
+    # Usamos 30 dias como aproximação
+    if "m" in s:
+        n = int(re.findall(r"\d+", s)[0])
+        provavel_data = data_base - timedelta(days=30 * n)
+        return provavel_data.strftime("%d/%m/%Y")
+
+    # ---- Anos ----
+    if "a" in s:
+        n = int(re.findall(r"\d+", s)[0])
+        provavel_data = data_base - timedelta(days=365 * n)
+        return provavel_data.strftime("%d/%m/%Y")
+
+    try:
+        return datetime.strptime(s, "%d/%m/%Y")
+    except:
+        return None
