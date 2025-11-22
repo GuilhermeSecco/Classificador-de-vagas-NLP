@@ -1,7 +1,6 @@
 __pycache__/
 *.pyc
 logs/
-data/raw/
 .venv/
 .idea/
 .env
