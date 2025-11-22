@@ -1,3 +1,7 @@
+"""
+Cria o filtro da pesquisa que será feita no LinkedIn
+"""
+
 def filtrar_busca(texto, periodo):
     url_base = "https://www.linkedin.com/search/results/content/?"
     texto = texto.replace(" ", "%20")

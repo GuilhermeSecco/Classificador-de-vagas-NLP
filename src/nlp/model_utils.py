@@ -1,14 +1,14 @@
 """
-Módulo: model_utils.py
-Responsável pelo pré-processamento inicial dos dados antes das etapas de transformação e modelagem.
+Compila todas as funções que serão utilizadas pelos modelos durante o treino e as predições.
 
 Etapas implementadas:
-1. Importação do dataset bruto.
-2. Preparação das colunas textuais.
-3. Preparação das labels.
-4. Embedding do texto.
-5. Combinação dos Embeddings.
-6. Treino, teste e relatório do modelo de classificação.
+Importação de datasets.
+Preparação das colunas textuais.
+Preparação das labels.
+Embedding do texto.
+Combinação dos Embeddings.
+Treino, teste e relatório do modelo de classificação.
+Salvamento dos modelos.
 """
 
 def import_dataset(df):
@@ -22,7 +22,7 @@ def import_dataset(df):
     import pandas as pd
     pd.set_option('display.max_columns', None)  # Mostra todas as colunas
     pd.set_option('display.width', None)
-    return pd.read_excel(f"./data/processed/{df}.xlsx")
+    return pd.read_excel(f"./data/raw/{df}")
 
 def prepare_text_column(df, col='texto'):
     #Prepara a coluna "texto"

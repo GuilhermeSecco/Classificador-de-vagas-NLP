@@ -1,8 +1,12 @@
+"""
+Realiza todas as funções da coleta, é o core do scraping
+"""
+
 from src.scraping.scraping_utils.scrolling import scroll_automatico
 from src.scraping.scraping_utils.extract_post_information import *
 from src.scraping.scraping_utils.text_cleaning import *
 
-def coletar_posts_driver(driver, max_posts=300):
+def coletar_posts_driver(driver, max_posts=200):
     posts_extraidos = []
     tentativas_sem_novos_posts = 0
 

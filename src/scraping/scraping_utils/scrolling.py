@@ -1,3 +1,7 @@
+"""
+Realiza Scroll na página simulando comportamento humano
+"""
+
 import random
 import time
 from src.scraping.scraping_utils.waits import pausa_aleatoria

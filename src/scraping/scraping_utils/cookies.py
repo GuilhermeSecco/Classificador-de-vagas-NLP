@@ -1,3 +1,6 @@
+"""
+Carrega os cookies do navegador
+"""
 import json
 import time
 

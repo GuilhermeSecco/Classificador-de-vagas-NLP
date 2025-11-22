@@ -1,3 +1,8 @@
+"""
+Limpa, Converte e Separa informações importantes
+"""
+
+
 import re
 import unicodedata
 
@@ -31,25 +36,19 @@ def extrair_senioridade(texto):
 
     padroes = {
         "multi": [
-            r"\bvagas\b", r"\boportunidades\b"
+            r"\bvagas\b", r"\boportunidades\b", r"\bv[áa]rias\b"
         ],
         "estagio": [
             r"\best[áa]gio\b", r"\bestagi[áa]rio\b", r"\bintern\b", r"\binternship\b", r"\bestagi[áa]ria\b"
         ],
         "junior": [
-            r"\bj[uú]nior\b", r"\bjunior\b", r"\bjr\b", r"\bjuninho\b", r"\bjuniores\b",
+            r"\bj[uú]nior\b", r"\bjunior\b", r"\bjr\b", r"\bjuninho\b", r"\bjuniores\b"
         ],
         "pleno": [
-            r"\bpleno\b", r"\bmid\b", r"\bmid-level\b", r"\bmid level\b"
+            r"\bpleno\b", r"\bmid\b", r"\bmid-level\b", r"\bmid level\b", r"\bespecialista\b", r"\bstaff\b", r"\bexpert\b", r"\specialist\b"
         ],
         "senior": [
-            r"\bs[êe]nior\b", r"\bsenior\b", r"\bsr\b"
-        ],
-        "especialista": [
-            r"\bespecialista\b", r"\bstaff\b", r"\bexpert\b", r"\specialist\b"
-        ],
-        "lead": [
-            r"\blead\b", r"\btech lead\b", r"\bprincipal\b", r"\bcoordenador\b", r"\bhead\b", r"\blíder\b"
+            r"\bs[êe]nior\b", r"\bsenior\b", r"\bsr\b", r"\blead\b", r"\btech lead\b", r"\bprincipal\b", r"\bcoordenador\b", r"\bhead\b", r"\blíder\b"
         ],
         "multi": [
             r"junior.*pleno", r"pleno.*senior", r"junior.*senior",
@@ -74,63 +73,100 @@ def extrair_localizacao(texto):
             return cidade
     return "não identificado"
 
-def converter_data(data_str, data_base=None):
+def converter_data(data):
     """
-    Converte datas relativas do LinkedIn para datas absolutas.
-    data_str: string como '1 sem', '3 meses', 'há 4 dias', '25 min'
-    data_base: data de coleta (datetime). Se None, usa agora.
+    Converte datas nos mais variados formatos para o formato ISO(YYYY-MM-DD)
     """
     #Import das bibliotecas
     import re
-    from datetime import datetime, timedelta
+    from datetime import date, datetime, timedelta
+    import math
 
     #Carregando a hora atual
-    if data_base is None:
-        data_base = datetime.now()
+    data_atual = datetime.now().date()
 
-    s = data_str.lower().strip()
+    #Carregando o texto
+    s = data
 
-    # ---- Agora ----
+    #Garantindo que a data esteja como string e lower
+    if isinstance(s, str):
+        s = s.strip().lower()
+
+    #Tratamento de valores Nulos
+    if s is None:
+        return None
+    if isinstance(s, float) and math.isnan(s):
+        return None
+    if isinstance(s, str) and s.strip() == "":
+        return None
+    if isinstance(s, str) and s.lower() in {"nan", "none"}:
+        return None
+
+    #Caso a data esteja em formato ISO, cai nesse funíl
+    if isinstance(s, str) and "-" in s:
+        try:
+            dt = datetime.fromisoformat(s)
+
+            # dt pode ser date OU datetime
+            if isinstance(dt, datetime):
+                dt = dt.date()  # remove hora
+
+            return dt.strftime("%Y-%m-%d")
+        except:
+            pass
+
+    #Caso a data esteja no formato brasileiro, passa por esse funíl
+    if isinstance(s, str) and "/" in s:
+        try:
+            dt = datetime.strptime(s, "%d/%m/%Y")
+            return dt.date().strftime("%Y-%m-%d")
+        except:
+            pass
+
+    #Se for datetime remove a hora e formata ao formato correto
+    if isinstance(s, datetime):
+        return s.date().strftime("%Y-%m-%d")
+
+    #Se já for date, formata para o formato correto
+    if isinstance(s, date):
+        return s.strftime("%Y-%m-%d")
+
+    #Agora
     if "agora" in s:
-        return data_base
+        return data_atual.strftime("%Y-%m-%d")
 
-    # ---- Minutos ----
+    #Minutos
     if "min" in s:
         n = int(re.findall(r"\d+", s)[0])
-        provavel_data = data_base - timedelta(minutes=n)
-        return provavel_data.strftime("%d/%m/%Y")
+        dt = data_atual - timedelta(minutes=n)
+        return dt.strftime("%Y-%m-%d")
 
-    # ---- Horas ----
-    if "h" in s:
+    #Horas
+    if "h" in s and "min" not in s:
         n = int(re.findall(r"\d+", s)[0])
-        provavel_data = data_base - timedelta(hours=n)
-        return provavel_data.strftime("%d/%m/%Y")
+        dt = data_atual - timedelta(hours=n)
+        return dt.strftime("%Y-%m-%d")
 
-    # ---- Dias ----
+    #Dias
     if "d" in s:
         n = int(re.findall(r"\d+", s)[0])
-        provavel_data = data_base - timedelta(days=n)
-        return provavel_data.strftime("%d/%m/%Y")
+        dt = data_atual - timedelta(days=n)
+        return dt.strftime("%Y-%m-%d")
 
-    # ---- Semanas ----
+    #Semanas
     if "sem" in s:
         n = int(re.findall(r"\d+", s)[0])
-        provavel_data = data_base - timedelta(weeks=n)
-        return provavel_data.strftime("%d/%m/%Y")
+        dt = data_atual - timedelta(weeks=n)
+        return dt.strftime("%Y-%m-%d")
 
-    # ---- Meses ----
-    if "m" in s:
+    #Meses
+    if "m" in s and "min" not in s:
         n = int(re.findall(r"\d+", s)[0])
-        provavel_data = data_base - timedelta(days=30 * n)
-        return provavel_data.strftime("%d/%m/%Y")
+        dt = data_atual - timedelta(days=30 * n)
+        return dt.strftime("%Y-%m-%d")
 
-    # ---- Anos ----
+    #Anos
     if "a" in s:
         n = int(re.findall(r"\d+", s)[0])
-        provavel_data = data_base - timedelta(days=365 * n)
-        return provavel_data.strftime("%d/%m/%Y")
-
-    try:
-        return datetime.strptime(s, "%d/%m/%Y")
-    except:
-        return None
+        dt = data_atual - timedelta(days=365 * n)
+        return dt.strftime("%Y-%m-%d")

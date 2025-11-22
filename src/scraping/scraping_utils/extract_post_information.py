@@ -1,3 +1,7 @@
+"""
+Extrai informações do post utilizando Selenium e BeautifulSoup
+"""
+
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup as soup
 from src.scraping.scraping_utils.text_cleaning import limpar_repeticao, limpar_data, converter_data
@@ -37,7 +41,7 @@ def extrair_data_post(soup):
             texto = limpar_data(texto)
             data_abs = converter_data(texto)
             if data_abs:
-                return data_abs.strftime("%Y-%m-%d")
+                return data_abs
 
 def extrair_link_post(soup):
     # Procurar links prováveis a partir de padrões do LinkedIn

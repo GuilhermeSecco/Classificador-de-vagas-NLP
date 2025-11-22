@@ -1,3 +1,7 @@
+"""
+É o main da coleta dos posts, apenas chama as funções e atribui configurações às variáveis dos processos
+"""
+
 from src.scraping.scraping_utils.driver_setup import iniciar_navegador
 from src.scraping.scraping_utils.cookies import carregar_cookies
 from src.scraping.scraping_utils.post_filters import filtrar_busca
@@ -14,12 +18,12 @@ if __name__ == "__main__":
     carregar_cookies(driver)
 
     #Buscando as vagas (Texto = Pesquisa, o período pode receber os valores: day = dia, week = semana, month = mês)
-    url = filtrar_busca("Vaga Analista de dados Junior", periodo="month")
+    url = filtrar_busca("Estágio Data Science", periodo="day")
     driver.get(url)
     time.sleep(4)
 
     #Coleta dos Posts
-    posts = coletar_posts_driver(driver)
+    posts = coletar_posts_driver(driver, max_posts=20)
 
     #Salvando novos posts em .csv
     salvar_em_csv(posts, "./data/raw/posts_linkedin.csv")

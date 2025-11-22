@@ -1,3 +1,7 @@
+"""
+Inicializa o Navegador
+"""
+
 from selenium import webdriver
 
 def iniciar_navegador():
