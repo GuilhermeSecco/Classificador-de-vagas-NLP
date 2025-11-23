@@ -10,11 +10,17 @@ Este projeto é um pipeline completo de Web Scraping + NLP + Machine Learning, d
     A senioridade da vaga (estágio, júnior, pleno, sênior ou multi-nível)
 
 A solução combina: 
-      <li>Extração automatizada com Selenium e BeautifulSoup.</li>
-      <li>Limpeza e padronização dos dados.</li>
-      <li>Embeddings com Sentence-BERT</li>
-      <li>Modelos de classificação com Regressão Logística</li>
-      <li>Processo de deduplicação baseado em similaridade textual.</li>
+
+    Extração automatizada com Selenium e BeautifulSoup.
+      
+    Limpeza e padronização dos dados.
+      
+    Embeddings com Sentence-BERT.
+      
+    Modelos de classificação com Regressão Logística
+      
+    Processo de deduplicação baseado em similaridade textual.
+      
 
 O projeto está em fase de preparação para deploy no portfólio, permitindo que qualquer usuário cole o link de uma vaga e receba uma análise automática em tempo real.
 
